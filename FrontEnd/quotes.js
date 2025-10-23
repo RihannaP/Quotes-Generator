@@ -3,10 +3,11 @@
   const authorLine = document.querySelector("#author");
   const newQuoteButton = document.querySelector("#new-quote");
 
+  const backendUrl = 'https://rihannap-quotes--generator-backend.hosting.codeyourfuture.io/';
 
 async function fetchQuote() {
   try {
-    const response = await fetch("http://127.0.0.1:3000/");
+    const response = await fetch(backendUrl);
     const text = await response.text();
     const [_, quote, author] = text.match(/"(.*)"\s*-(.*)/) || [];
     quoteLine.textContent = quote?.trim() || text;
