@@ -4,17 +4,30 @@
   const newQuoteButton = document.querySelector("#new-quote");
 
 
- async function fetchQuote() {
+//  async function fetchQuote() {
+//   try {
+//     const response = await fetch("http://127.0.0.1:3000/");
+//     if (!response.ok) {
+//       throw new Error(`Server error: ${response.status}`);
+//     }
+//     const data = await response.json();
+//     quoteLine.textContent = data.quote;
+//     authorLine.textContent = `— ${data.author}`;
+//   } catch (error) {
+//     console.error("Failed to fetch quote:", error);
+//     quoteLine.textContent = "Error fetching quote.";
+//     authorLine.textContent = "";
+//   }
+// }
+
+async function fetchQuote() {
   try {
     const response = await fetch("http://127.0.0.1:3000/");
-    if (!response.ok) {
-      throw new Error(`Server error: ${response.status}`);
-    }
-    const data = await response.json();
-    quoteLine.textContent = data.quote;
-    authorLine.textContent = `— ${data.author}`;
-  } catch (error) {
-    console.error("Failed to fetch quote:", error);
+    const text = await response.text();
+    const [_, quote, author] = text.match(/"(.*)"\s*-(.*)/) || [];
+    quoteLine.textContent = quote?.trim() || text;
+    authorLine.textContent = author?.trim() || "";
+  } catch {
     quoteLine.textContent = "Error fetching quote.";
     authorLine.textContent = "";
   }
