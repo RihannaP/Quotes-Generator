@@ -1,30 +1,54 @@
 
+import express from "express";
+import cors from "cors";
+app.use(cors());
 
-const quoteLine = document.querySelector("#quote");
-const authorLine = document.querySelector("#author");
-const newQuoteButton = document.querySelector("#new-quote");
-
-
-function randomQuoteGenerate() {
-  const randomArr = pickFromArray(quotes);
-  quoteLine.textContent =  randomArr.quote;
-  authorLine.textContent = randomArr.author;
-}
-// Update the displayed quote when the window is loading
-  window.addEventListener("load", randomQuoteGenerate);
-
-// Update the displayed quote when the button is clicked
-newQuoteButton.addEventListener("click", randomQuoteGenerate);
+const app = express();
+const port = 3000;
 
 
-
-// You don't need to change this function
-function pickFromArray(choices) {
-return choices[Math.floor(Math.random() * choices.length)];
+function randomQuote() {
+  const index = Math.floor(Math.random() * quotes.length);
+  return quotes[index];
 }
 
-// A list of quotes you can use in your app.
-// DO NOT modify this array, otherwise the tests may break!
+app.get("/", (req, res) => {
+  const quote = randomQuote();
+  res.send(`"${quote.quote}" -${quote.author}`);
+});
+
+app.post("/", (req, res) => {
+  const bodyBytes = [];
+  req.on("data", chunk => bodyBytes.push(...chunk));
+  req.on("end", () => {
+    const bodyString = String.fromCharCode(...bodyBytes);
+    let body;
+    try {
+      body = JSON.parse(bodyString);
+    } catch (error) {
+      console.error(`Failed to parse body ${bodyString} as JSON: ${error}`);
+      res.status(400).send("Expected body to be JSON.");
+      return;
+    }
+    if (typeof body != "object" || !("quote" in body) || !("author" in body)) {
+      console.error(`Failed to extract quote and author from post body: ${bodyString}`);
+      res.status(400).send("Expected body to be a JSON object containing keys quote and author.");
+      return;
+    }
+    quotes.push({
+      quote: body.quote,
+      author: body.author,
+    });
+    res.send("ok");
+  });
+});
+
+app.listen(port, () => {
+  console.error(`Quote server listening on port ${port}`);
+});
+
+
+
 const quotes = [
 {
   quote: "Life isn't about getting and having, it's about giving and being.",
