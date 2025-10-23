@@ -30,11 +30,6 @@ form.addEventListener("submit", async (e) => {
   const newQuote = quoteInput.value.trim();
   const newAuthor = authorInput.value.trim();
 
-  if (!newQuote || !newAuthor) {
-    formMessage.textContent = "Please fill in both fields!";
-    return;
-  }
-
   try {
     const response = await fetch(backendUrl, {
       method: "POST",
@@ -47,7 +42,7 @@ form.addEventListener("submit", async (e) => {
     formMessage.textContent = "Quote added successfully!";
     quoteInput.value = "";
     authorInput.value = "";
-    fetchQuote(); 
+
   } catch (err) {
     formMessage.textContent = "Error submitting quote.";
     console.error(err);
