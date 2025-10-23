@@ -516,5 +516,3 @@ const quotes = [
   author: "Zig Ziglar",
 },
 ];
-
-// call pickFromArray with the quotes array to check you get a random quote
